@@ -7,7 +7,7 @@ declare const process:
   | undefined
 
 const repoName = 'radiation-view-docs'
-const base = process?.env?.DOCS_BASE || '/'
+const base = process?.env?.DOCS_BASE || `/${repoName}/`
 
 export default defineConfig({
   title: 'FSE Radiation View',
