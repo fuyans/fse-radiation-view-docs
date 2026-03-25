@@ -2,7 +2,7 @@
 
 This repository contains the standalone VitePress documentation site for FSE Radiation View.
 
-The default local base path is `/`. GitHub Pages deployment overrides it to `/radiation-view-docs/` via the `DOCS_BASE` environment variable.
+The default local base path is `/`. GitHub Pages deployment overrides it to `/<repo-name>/` via the `DOCS_BASE` environment variable.
 
 ## Local development
 
@@ -16,6 +16,12 @@ Start the local docs server:
 
 ```bash
 npm run docs:dev
+```
+
+Preview GitHub Pages base path locally (PowerShell):
+
+```powershell
+$env:DOCS_BASE = "/radiation-view-docs/"; npm run docs:dev
 ```
 
 Build the site:
@@ -37,7 +43,7 @@ This repository is configured to deploy automatically to GitHub Pages from the [
 The published site base path is configured for the GitHub project site:
 
 ```text
-/radiation-view-docs/
+/<repo-name>/
 ```
 
 The VitePress base is controlled through the `DOCS_BASE` environment variable in [`.vitepress/config.mts`](.vitepress/config.mts:3) and the GitHub Actions workflow sets it to the correct project path during deployment.

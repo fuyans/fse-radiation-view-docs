@@ -6,14 +6,13 @@ declare const process:
     }
   | undefined
 
-const repoName = 'radiation-view-docs'
-const base = process?.env?.DOCS_BASE || `/${repoName}/`
+const base = process?.env?.DOCS_BASE ?? '/'
 
 export default defineConfig({
   title: 'FSE Radiation View',
   description: 'Documentation for the FSE Radiation View',
   base,
-  srcExclude: ['README.md', 'BUILD_SINGLE.md'],
+  srcExclude: ['README.md'],
   themeConfig: {
     search: {
       provider: 'local',
