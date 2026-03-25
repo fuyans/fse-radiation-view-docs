@@ -1,0 +1,30 @@
+.DS_Store
+Thumbs.db
+
+# Node dependencies
+node_modules/
+
+# VitePress / Vite build output
+.vitepress/cache/
+.vitepress/dist/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Editor files
+.idea/
+.vscode/
+
+# OS temp files
+*.tmp
+*.temp
+
