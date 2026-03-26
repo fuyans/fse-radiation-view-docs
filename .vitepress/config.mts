@@ -18,6 +18,10 @@ export default defineConfig({
     math: true,
   },
   themeConfig: {
+    editLink: {
+      pattern: 'https://github.com/fuyans/fse-radiation-view-docs/edit/main/:path',
+      text: 'Edit source',
+    },
     search: {
       provider: 'local',
     },
