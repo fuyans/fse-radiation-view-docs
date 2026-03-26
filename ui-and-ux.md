@@ -1,7 +1,5 @@
 # User Interface and Interaction
 
-## Purpose
-
 This document explains how the user interface is organized and how to use it efficiently when building, editing, and reviewing a radiation heat transfer scene.
 
 The interface is divided into five main areas:

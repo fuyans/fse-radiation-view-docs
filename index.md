@@ -11,6 +11,6 @@ assessments.
 ## Quick links
 
 - [User Guide](./user-manual.md) — Concepts, workflow, and reference
-- [User Interface and Interaction](./user-interface-and-interaction.md) — Layout, controls, and recommended usage
+- [User Interface and Interaction](ui-and-ux.md) — Layout, controls, and recommended usage
 - [Tutorial](./tutorial.md) — Step-by-step quick start and example
 - [Verification](./verification.md) — Solver validation, uncertainty, and recommended test cases

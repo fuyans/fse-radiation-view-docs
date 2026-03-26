@@ -1,7 +1,5 @@
 # User Manual
 
-## Overview
-
 This editor supports 3D radiation heat transfer calculations using Monte Carlo ray tracing. Within the environment, you can define **emitters** (hot surfaces), **receivers** (surfaces that receive radiant flux), and **blocks** (opaque obstacles). 
 
 The solver computes the **net heat flux** on each receiver. This accounts for the incident radiation from emitters, ambient irradiance (when **Ambient temperature** is set), minus the receiver's own re-emission (σT⁴). The resulting temperature difference between the emitter and receiver is inherently reflected in the calculations. 
@@ -95,3 +93,20 @@ You can swiftly create objects matched to a floor plan's orientation using the s
 
 ### Upcoming Feature Exploration: Bulk Digitization
 Future updates may introduce polyline-based bulk object creation. This will allow users to select an image plan and draw continuous line segments, automatically generating a sequence of standing emitters or receivers along that path. This is intended to drastically reduce setup time for complex floor plans.
+
+## 8. User Interface Variable Inputs and Units
+To facilitate accurate solver execution, the application interface must collect the following parameters. All temperatures must be internally converted to Kelvin (K) prior to calculation.
+
+### 8.1. Global Parameters
+* **Ambient Temperature ($T_a$):** Required. Standard input format: Kelvin (K) or Celsius (°C).
+* **Ray Count ($N$):** Required. Integer value dictating the Monte Carlo ray-casting resolution per mesh point. Default recommendation: 1,000 to 10,000 rays.
+
+### 8.2. Emitter Parameters
+* **Surface Temperature ($T_e$):** Required (unless Emissive Power is provided). Input format: K or °C.
+* **Emissivity ($\epsilon_e$):** Required. Dimensionless scalar. Valid range: $0.0 \le \epsilon_e \le 1.0$.
+* **Emissive Power / Heat Flux ($E$):** Optional alternative to temperature. Input format: kW/m² or W/m².
+
+### 8.3. Receiver Parameters
+* **Surface Temperature ($T_r$):** Required. Input format: K or °C.
+* **Emissivity ($\epsilon_r$):** Required. Dimensionless scalar. Valid range: $0.0 \le \epsilon_r \le 1.0$.
+* **Absorptivity ($\alpha_r$):** Required. Dimensionless scalar. Valid range: $0.0 \le \alpha_r \le 1.0$.
