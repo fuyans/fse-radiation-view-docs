@@ -2,13 +2,14 @@
 
 This document explains how the user interface is organized and how to use it efficiently when building, editing, and reviewing a radiation heat transfer scene.
 
+![Site plan](public/ui-and-ux/ui-overview.png)
+
 The interface is divided into five main areas:
 
 * **Top menu bar** for file and application-level commands.
-* **Right sidebar** for object properties, scene settings, and computation controls.
+* **Sidebar** for object properties, scene settings, and computation controls.
 * **Left toolbar** for quickly adding objects to the scene.
 * **Bottom toolbar** for navigation, object interaction modes, and view switching.
-* **Lower-left viewport overlays** for scene statistics and the 3D axis gizmo.
 
 ## Top Menu Bar
 
@@ -23,9 +24,11 @@ Typical actions available here include:
 
 In general, use the top menu bar whenever you need to manage files or access commands that affect the project as a whole rather than a single object.
 
-## Right Sidebar
+## Sidebar
 
-The right sidebar is the main panel for inspecting and editing the current selection or scene configuration.
+![sidebar](public/ui-and-ux/ui-sidebar.png)
+
+The sidebar is the main panel for inspecting and editing the current selection or scene configuration.
 
 Depending on what is selected, this area can be used to:
 
@@ -38,6 +41,8 @@ The sidebar is the best place to make precise changes after creating or selectin
 
 ## Left Toolbar
 
+![left toolbar](public/ui-and-ux/ui-left-toolbar.png)
+
 The left toolbar provides quick access to object creation tools so users can add items directly into the scene without opening menus.
 
 Typical uses include adding:
@@ -49,6 +54,8 @@ Typical uses include adding:
 This toolbar is intended for rapid scene setup. When building a model, users will often start here to place the main objects before refining their dimensions and properties in the sidebar.
 
 ## Bottom Toolbar
+
+![bottom toolbar](public/ui-and-ux/ui-bottom-toolbar.png)
 
 The bottom toolbar provides quick access to scene navigation controls and interaction modes for editing objects in the 3D view.
 
@@ -87,22 +94,13 @@ The **Perspective** view is the standard 3D working view.
 
 The orthographic views (**Front**, **Back**, **Left**, **Right**, **Top**, and **Bottom**) present the scene in a more 2D manner, which makes alignment, positioning, and editing easier when working on a single plane or axis direction.
 
-## Lower-Left Viewport Information
-
-The lower-left area of the viewport contains supporting visual aids:
-
-* **Scene statistics** showing information about the items currently in the scene.
-* A **3D axis gizmo** indicating the orientation of the scene axes.
-
-These tools help users maintain awareness of scene complexity and current orientation while navigating the model.
-
 ## Recommended Way to Use the Interface
 
 For efficient editing, a typical workflow is:
 
 1. Use the left toolbar to add emitters, receivers, and other required objects.
 2. Use the bottom toolbar to choose the correct interaction mode and viewport view.
-3. Select objects in the scene and refine their parameters in the right sidebar.
+3. Select objects in the scene and refine their parameters in the sidebar.
 4. Use the top menu bar for file operations and less frequently used commands.
 5. Refer to the lower-left overlays to stay oriented and monitor scene information while editing.
 
