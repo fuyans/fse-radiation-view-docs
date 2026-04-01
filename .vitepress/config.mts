@@ -61,7 +61,7 @@ export default defineConfig({
           text: 'Guide',
           items: [
             { text: 'User Manual', link: '/user-manual' },
-            { text: 'User Interface', link: '/user-interface-and-interaction' },
+            { text: 'User Interface', link: '/ui-and-ux' },
             { text: 'Tutorial', link: '/tutorial' },
             { text: 'Verification', link: '/verification' },
           ],
