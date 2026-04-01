@@ -1,43 +1,53 @@
 # User Manual
 
-This editor supports 3D radiation heat transfer calculations using Monte Carlo ray tracing. Within the environment, you can define **emitters** (hot surfaces), **receivers** (surfaces that receive radiant flux), and **blocks** (opaque obstacles). 
+This editor supports 3D radiation heat transfer calculations using Monte Carlo ray tracing. Within the environment, you
+can define emitters (hot surfaces), receivers (surfaces that receive radiant flux), and blocks (opaque obstacles).
 
-The solver computes the **net heat flux** on each receiver. This accounts for the incident radiation from emitters, ambient irradiance (when **Ambient temperature** is set), minus the receiver's own re-emission (σT⁴). The resulting temperature difference between the emitter and receiver is inherently reflected in the calculations. 
+The solver computes the net heat flux on each receiver. This accounts for the incident radiation from emitters, ambient
+irradiance (when Ambient temperature is set), minus the receiver's own re-emission. The resulting temperature difference
+between the emitter and receiver is inherently reflected in the calculations.
 
-*Note: Only emitters contribute active radiation to the environment. Rays that strike other receivers or blocks do not contribute secondary radiation; they only act as physical obstructions.*
+Results are visualised as heatmaps within the viewport and can be exported for formal reporting.
 
-Results are visualized as heatmaps within the viewport and can be exported for formal reporting.
+> Note: Only emitters contribute active radiation to the environment. Rays that strike other receivers or blocks do not
+> contribute secondary radiation; they only act as physical obstructions.
 
 ## Main Concepts
 
 * **Emitter:** A planar surface that radiates heat (e.g., a furnace wall). The solver uses the user-defined temperature to compute the emitted power.
 * **Receiver:** A planar surface where the net heat flux is calculated. Each receiver is discretized into a grid of cells based on the chosen mesh size. The solver returns one net flux value per cell, which is displayed as a heatmap and optional contour lines.
 * **Block:** An opaque, non-transmitting object used to model physical obstacles between emitters and receivers.
-* **Image Plan:** A horizontal reference plane that displays an imported image (e.g., a floor plan or schematic). By setting the scale and origin, world units align with the image. It serves as a 2D drawing surface for the E<sub>p</sub>/R<sub>p</sub> and E<sub>S</sub>/R<sub>S</sub> two-point tools.
+* **Image Plan:** A horizontal reference plane that displays an imported image (e.g., a floor plan or schematic). By
+  setting the scale and origin, world units align with the image. It serves as a 2D drawing surface for the **E<sub>
+  p</sub>**/**R<sub>p</sub>** and **E<sub>S</sub>**/**R<sub>S</sub>** two-point tools.
 * **Helper Plan:** A horizontal plane with a grid and user-defined dimensions. It functions identically to an Image Plan, providing a reference drawing surface when an imported image is not required.
 
-> **Important Geometric Note:** All geometry utilizes the **front face** of each object for radiation (emission, reception, or blocking). The front face is defined by the **+Z normal** in the object's local space. For receivers, the sampling grid is placed directly on this front face, not at the center of the object's thickness. This geometry standard typically yields conservative results (e.g., slightly higher calculated heat fluxes), which is standard practice for design or safety verifications.
+> Note: All geometry utilises the front face of each object for radiation (emission, reception, or blocking). The front
+> face is defined by the +Z normal in the object's local axis. For receivers, the sampling grid is placed directly on this
+> front face, not at the center of the object's thickness. This geometry standard typically yields conservative results (
+> e.g., slightly higher calculated heat fluxes).
 
 ## Units
 
-All quantities utilize the following default units. There is no unit selector in the UI; you must ensure your inputs align with these standards:
+All quantities utilise the following default units. There is no unit selector in the UI; you must ensure your inputs
+align with these standards:
 
-* **Length:** Metres (m) — Applies to positions, dimensions, mesh size, and world coordinates.
+* **Length**: Metres (m) — Applies to positions, dimensions, mesh size, and world coordinates.
 * **Temperature:** Kelvin (K) — Applies to emitter, receiver, and ambient temperatures.
 * **Heat Flux:** Kilowatts per square metre (kW/m²) — Applies to net heat flux solver outputs, heatmaps, and reports.
 
 ## Workflow
 
 1.  **Add Objects:** Insert Emitters, Receivers, or Blocks from the Add menu or the left toolbar. Alternatively, create objects directly on a plan using the two-point drawing tools (**E<sub>p</sub> / R<sub>p</sub>** for flat surfaces, **E<sub>S</sub> / R<sub>S</sub>** for standing surfaces).
-2.  **Position and Parameterize:** Place and scale objects in the viewport. Use the sidebar to configure dimensions, temperatures, and receiver **Mesh size**. 
-    * *Solver Settings:* Navigate to **Settings → Solver** to define the **Ambient temperature** and **Number of Rays**. 
-3.  **Run Calculation:** Click **Status → Run** (or the main Run button). The editor processes the scene data and calculates the resulting heat flux per receiver.
+2. **Position and Parameterize:** Place and scale objects in the viewport. Use the sidebar to configure dimensions,
+   temperatures, and receiver Mesh size.
+3. **Run Calculation:** Click **Status > Run** (or the main Run button). The editor processes the scene data and
+   calculates the resulting heat flux per receiver.
 4.  **View Results:** Receivers will update to display a heatmap. Hover the cursor over any receiver to view the specific heat flux at that point, the min/max range, and the location of the maximum flux.
-5.  **Export:** Navigate to **File → Export → Heat flux report (HTML)** to generate a data table containing raw min/max values and locations for all receivers.
+5. **Export:** Navigate to **File > Export > Heat flux report (HTML)** to generate a data table containing raw min/max
+   values and locations for all receivers.
 
 ## Data and Display
-
-
 
 * **Raw Data Storage:** The values saved in each receiver's parameters and exported in reports are strictly the **raw solver output**. No reduction or smoothing is applied to stored data.
 * **Visualization Refresh:** Heatmaps and visual results do not update automatically when settings change or calculations are re-run. You must click the **Refresh** button under the **Compute** tab in the sidebar to redraw the visuals.
@@ -94,19 +104,19 @@ You can swiftly create objects matched to a floor plan's orientation using the s
 ### Upcoming Feature Exploration: Bulk Digitization
 Future updates may introduce polyline-based bulk object creation. This will allow users to select an image plan and draw continuous line segments, automatically generating a sequence of standing emitters or receivers along that path. This is intended to drastically reduce setup time for complex floor plans.
 
-## 8. User Interface Variable Inputs and Units
+## User Interface Variable Inputs and Units
 To facilitate accurate solver execution, the application interface must collect the following parameters. All temperatures must be internally converted to Kelvin (K) prior to calculation.
 
-### 8.1. Global Parameters
+### Global Parameters
 * **Ambient Temperature ($T_a$):** Required. Standard input format: Kelvin (K) or Celsius (°C).
 * **Ray Count ($N$):** Required. Integer value dictating the Monte Carlo ray-casting resolution per mesh point. Default recommendation: 1,000 to 10,000 rays.
 
-### 8.2. Emitter Parameters
+### Emitter Parameters
 * **Surface Temperature ($T_e$):** Required (unless Emissive Power is provided). Input format: K or °C.
 * **Emissivity ($\epsilon_e$):** Required. Dimensionless scalar. Valid range: $0.0 \le \epsilon_e \le 1.0$.
 * **Emissive Power / Heat Flux ($E$):** Optional alternative to temperature. Input format: kW/m² or W/m².
 
-### 8.3. Receiver Parameters
+### Receiver Parameters
 * **Surface Temperature ($T_r$):** Required. Input format: K or °C.
 * **Emissivity ($\epsilon_r$):** Required. Dimensionless scalar. Valid range: $0.0 \le \epsilon_r \le 1.0$.
 * **Absorptivity ($\alpha_r$):** Required. Dimensionless scalar. Valid range: $0.0 \le \alpha_r \le 1.0$.
