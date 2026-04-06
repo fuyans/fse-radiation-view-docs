@@ -1,16 +1,30 @@
-# FSE Radiation View — Documentation
+# FSE Radiation View Documentation
 
-This documentation describes the Radiation Heat Transfer Editor (FSE Radiation View). It is intended for engineers and
-analysts who need to model radiative heat transfer using Monte Carlo ray tracing. Each page contains concise guidance,
-usage examples, and troubleshooting notes so you can get accurate, reproducible results.
+This documentation describes FSE Radiation View, a 3D radiation heat transfer tool that estimates spatially resolved net radiative heat flux on user-defined receivers using Monte Carlo ray tracing.
 
-Why this matters: the solver provides spatially resolved net heat flux on user-defined receivers. Correct setup (units,
-geometry orientation, mesh size, and ray count) is essential to produce reliable results for design or safety
-assessments.
+## Scope and Intended Use
 
-## Quick links
+FSE Radiation View is intended for engineering problems in which simple closed-form view-factor relations are not practical, for example:
 
-- [User Guide](./user-manual.md) — Concepts, workflow, and reference
-- [User Interface and Interaction](ui-and-ux.md) — Layout, controls, and recommended usage
-- [Tutorial](./tutorial.md) — Step-by-step quick start and example
-- [Verification](./verification.md) — Solver validation, uncertainty, and recommended test cases
+- multiple emitters and receivers
+- arbitrary orientations
+- partial shielding or complex line-of-sight conditions
+- irregular layouts imported from plans or other reference drawings
+
+For simple canonical arrangements, simplified analytical methods should remain the first choice because they are faster, more transparent, and easier to verify independently.
+
+The present model is a direct-radiation tool. It resolves exchange from designated emitters to receivers, can include an optional uniform ambient radiative background, and treats other geometry as opaque for visibility calculations. It does not solve full enclosure radiosity, reflected radiation, or secondary re-radiation between receivers.
+
+Reliable results depend on consistent units, correct face orientation, suitable mesh resolution, and an adequate ray count.
+
+## Guide
+
+- [User Manual](./user-manual.md) — Concepts, workflow, solver assumptions, and practical guidance
+- [User Interface and Interaction](./ui-and-ux.md) — Layout, controls, and recommended operating sequence
+- [Tutorial](./tutorial.md) — Worked example and step-by-step setup
+- [Verification](./verification.md) — Benchmark cases, uncertainty, and acceptance criteria
+
+## Reference
+
+- [Radiation Heat Transfer](./reference-radiation-heat-transfer.md) — Governing equations, assumptions, and unit conventions
+- [Ray Casting](./reference-ray-casting.md) — Monte Carlo view-factor estimation and geometric classification

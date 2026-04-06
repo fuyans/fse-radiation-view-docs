@@ -1,84 +1,181 @@
 # Radiation Heat Transfer
 
-This document details the mathematical framework used by the application to solve for radiation heat flux. The solver calculates these values at discrete mesh points situated on the surfaces of designated receivers.
+This page summarises the radiation heat transfer formulation used by FSE Radiation View. The solver evaluates net radiative heat flux at discrete sample locations distributed across each receiver surface.
 
-To determine the incident radiation paths and view factors, the application employs a ray-casting methodology.
+The application uses ray tracing to estimate direct irradiation from designated emitters. Ambient temperature, where supplied, is handled separately as a uniform radiative background.
 
-SI units are used throughout the calculation, except for heat flux is converted between W/m2 and kW/m2 at input and output as common practice.
+Strict SI units are used internally. Heat-flux values may be presented at the interface in either W/m² or kW/m² for engineering convenience.
 
-Calculation Constraints and Assumptions:
+## Modelling Assumptions
 
-* **No Refraction or Reflection:** The application assumes straight-line radiation paths. Reflected and refracted energy are not calculated.
-* **Directional Emission Limits:** Radiation originates exclusively from designated emitters. Receivers do not act as secondary emitters to other receivers. Even if a neighboring receiver possesses a higher temperature, its radiated energy is not accounted for in the heat flux calculations of other receivers.
+The current formulation adopts the following assumptions:
 
-System Entities and Properties:
+* **Non-participating medium:** Radiation travels in straight lines through the intervening space. Gas absorption, gas emission, and scattering are not modelled.
+* **Diffuse-grey surface treatment:** The view-factor formulation assumes diffuse radiative exchange.
+* **No reflection or transmission:** Reflected radiation, transmitted radiation, and refraction are not included.
+* **No secondary re-radiation from non-emitters:** Blocks and receivers influence line of sight, but they are not solved as secondary radiating surfaces.
+* **Uniform ambient background:** If ambient temperature is supplied, it is converted to a uniform radiative background and applied equally at every receiver point. It is not ray-traced and does not depend on geometry.
 
-* **Emitters:** Defined by Temperature ($T_e$) and Emissivity ($\epsilon_e$).
-* **Ambient:** Defined by Temperature ($T_a$).
-* **Receivers:** Defined by Temperature ($T_r$), Emissivity ($\epsilon_r$), and Absorptivity ($\alpha_r$).
+These assumptions make the tool appropriate for direct-radiation problems with defined emitters and receivers. They are not equivalent to a full enclosure-radiation or radiosity solution.
 
-## Net Heat Flux Equation
-The total net radiation heat flux ($q''_{net}$) evaluated at any single mesh point on a receiver is the sum of two major energy terms: the net energy exchange with the ambient environment, and the energy received from the emitters.
+## Net Heat Flux Formulation
 
-$$q''_{net} = q''_{ambient} + q''_{emitter}$$
+At a receiver sample point $p$, the net radiative heat flux is written as
 
-Where:
-* $q''_{net}$ is the total net heat flux at the receiver mesh point.
-* $q''_{ar}$ is the net energy exchange between the ambient environment and the receiver.
-* $q''_{er}$ is the net energy exchange between the emitter and the receiver.
+$$
+q''_{\text{net}}(p) = \alpha_r \left(q''_{\text{emitters}}(p) + J_{\text{ambient}}\right) - \epsilon_r \sigma T_r^4
+$$
 
-## Energy Exchange: Emitter and Receiver ($q''_{e}$)
-This term isolates the radiation originating from the emitters that is successfully absorbed by the receiver. Because the application uses ray casting, the geometric relationship and visibility between the mesh point and the emitter are quantified by a view factor ($F_e$).
+where:
 
-The heat flux absorbed by the receiver from the emitter is calculated as:
+* $q''_{\text{net}}(p)$ = net radiative heat flux at receiver point $p$
+* $\alpha_r$ = receiver absorptivity
+* $q''_{\text{emitters}}(p)$ = irradiation from visible emitter surfaces at receiver point $p$
+* $J_{\text{ambient}}$ = ambient radiosity applied uniformly at all receiver points
+* $\epsilon_r$ = receiver emissivity
+* $\sigma$ = Stefan-Boltzmann constant, $5.670374 \times 10^{-8}\ \text{W}/(\text{m}^2 \cdot \text{K}^4)$
+* $T_r$ = absolute receiver temperature, in K
 
-$$q''_{e} = \alpha_{r} \cdot \epsilon_{e} \cdot \phi_{e} \cdot \sigma \cdot T_{e}^4$$
+A positive value of $q''_{\text{net}}$ indicates net heating of the receiver; a negative value indicates net radiative cooling.
 
-Where:
-* $\alpha_r$ = Absorptivity of the receiver
-* $\epsilon_e$ = Emissivity of the emitter
-* $\sigma$ = Stefan-Boltzmann constant ($5.670374 \times 10^{-8} \text{ W/(m}^2 \cdot \text{K}^4)$)
-* $\phi_e$ = View factor from the receiver mesh point to the emitter (determined via ray casting, $0 \le F_e \le 1$)
-* $T_e$ = Absolute temperature of the emitter (in Kelvin)
+## Direct Irradiation from Emitters
 
+For $M$ emitters, the direct emitter contribution is
 
-## Energy Exchange: Ambient and Receiver ($q''_{a}$)
-This term calculates the net difference between the radiation absorbed from the ambient environment and the total radiation emitted away by the receiver itself.
+$$
+q''_{\text{emitters}}(p) = \sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4
+$$
 
-Rays cast from the receiver that do not intersect an emitter are assumed to hit the ambient environment. Therefore, the ambient view factor is $F_a = 1 - F_e$. The ambient environment is modelled as a blackbody ($\epsilon = 1$) at temperature $T_a$.
+where:
 
-The net ambient energy exchange is calculated as:
+* $F_{p \to e_j}$ = view factor from receiver point $p$ to emitter $j$
+* $\epsilon_{e_j}$ = emissivity of emitter $j$
+* $T_{e_j}$ = absolute temperature of emitter $j$, in K
 
-$$q''_{ar} = (\alpha_r \cdot \sigma \cdot T_a^4 \cdot \phi_{a}) - (\epsilon_r \cdot \sigma \cdot T_r^4)$$
+Only designated emitters contribute to this term. Blocks and receivers may prevent rays from reaching emitters, but they do not add their own radiation term.
 
-Where:
-* $T_a$ = Absolute temperature of the ambient environment (in Kelvin)
-* $\phi_{a}$ = View factor from the receiver to the ambient environment
-* $\epsilon_r$ = Emissivity of the receiver
-* $T_r$ = Absolute temperature of the receiver (in Kelvin)
-* The first half of the equation represents ambient energy absorbed; the second half represents the energy actively emitted by the receiver.
+## Ambient Temperature Handling
 
-## Expanded Net Heat Flux Equation
-By substituting the expanded individual exchange terms back into the primary equation, the complete formula for the net heat flux at a receiver mesh point is:
+When ambient temperature is provided, the solver converts it to ambient radiosity:
 
-$$q''_{net} = \left(\alpha_r \cdot \sigma \cdot T_a^4 \cdot \phi_a\right) - \left(\epsilon_r \cdot \sigma \cdot T_r^4\right) + \alpha_r \cdot \epsilon_e \cdot \phi_e \cdot \sigma \cdot T_e^4$$
+$$
+J_{\text{ambient}} = \sigma T_a^4
+$$
 
-A positive $q''_{net}$ indicates a net gain of energy (heating) at the mesh point, while a negative value indicates a net loss of energy (cooling).
+where:
+
+* $J_{\text{ambient}}$ = uniform ambient radiosity, in W/m²
+* $T_a$ = ambient temperature, in K
+
+This ambient term is applied uniformly to every receiver point. It is **not** ray-traced and therefore:
+
+* blockers do not reduce it
+* receiver orientation does not change it
+* partial view to the surroundings is not modelled
+* sky, walls, ground, and other surroundings are not distinguished separately
+
+In practical terms, this is equivalent to applying a large black isothermal enclosure at temperature $T_a$ with an effective view factor of 1.
+
+If ambient temperature is omitted, then
+
+$$
+J_{\text{ambient}} = 0
+$$
+
+## Expanded Equation
+
+Substituting the direct-emitter and ambient terms gives
+
+$$
+q''_{\text{net}}(p) =
+\alpha_r \left(
+\sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4
++
+\sigma T_a^4
+\right)
+- \epsilon_r \sigma T_r^4
+$$
+
+when ambient temperature is supplied.
+
+If ambient temperature is omitted, the equation reduces to
+
+$$
+q''_{\text{net}}(p) =
+\alpha_r \left(
+\sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4
+\right)
+- \epsilon_r \sigma T_r^4
+$$
+
+For a single emitter, this becomes
+
+$$
+q''_{\text{net}} =
+\alpha_r \left(
+F_{p \to e}\, \epsilon_e\, \sigma T_e^4
++
+\sigma T_a^4
+\right)
+- \epsilon_r \sigma T_r^4
+$$
+
+when ambient temperature is present.
+
+## Practical Interpretation
+
+The formulation above shows that the result depends on both geometry and thermal state:
+
+* the **emitter view factors** determine how much direct source irradiation reaches the receiver
+* the **emitter temperatures and emissivities** determine the source strength
+* the **ambient temperature**, if supplied, adds a uniform radiative background everywhere
+* the **receiver temperature and emissivity** determine the re-emission term
+
+This means that ambient temperature should be interpreted as a **radiative surroundings temperature**, not as a convective air temperature.
+
+If the objective is to isolate direct emitter-to-receiver exchange during benchmarking, a useful setup is to set $T_a = T_r$. Under that condition, the net ambient-only term vanishes when $\alpha_r = \epsilon_r$.
+
+Where shielding, restricted sky view, or separate surroundings temperatures are important, the present ambient treatment may overestimate ambient heating and underestimate radiative cooling.
+
+## Special Cases
+
+If ambient temperature is omitted, ambient irradiation is zero and only direct emitter irradiation contributes.
+
+If there are no emitters and ambient temperature is supplied, the equation reduces to
+
+$$
+q''_{\text{net}} = \alpha_r \sigma T_a^4 - \epsilon_r \sigma T_r^4
+$$
+
+If $T_a = T_r$ and $\alpha_r = \epsilon_r = 1$, the net ambient-only contribution is zero.
 
 ## Heat Flux and Temperature Conversions
-In certain scenarios, the input parameters for emitters or receivers may be provided as an emitted heat flux rather than a direct temperature limit. The application converts between these values using the Stefan-Boltzmann law.
 
-Let $E$ represent the total emissive power (heat flux) of a surface. To determine the heat flux $E$ (in $W/m^2$) emitted by a surface with a known temperature $T$ (in $K$) and emissivity $\epsilon$ (usually assumed as one for conservatism):
+Where a surface is defined by emitted heat flux rather than temperature, the Stefan-Boltzmann relation is used:
 
-$$E = \epsilon \cdot \sigma \cdot T^4$$
+$$
+E = \epsilon \sigma T^4
+$$
 
-Useful calculated values are shown in the table below assuming an emissivity of one.
+The inverse conversion is
 
-| Heat flux [$W/m^2$] | Temperature [$^oC$] | Temperature [$K$] |
-| ------------------- | ------------------- | ----------------- |
-| 42,000              | 655                 | 928               |
-| 84,000              | 831                 | 1,104             |
-| 168,000             | 1,039               | 1,312             |
+$$
+T = \left(\frac{E}{\epsilon \sigma}\right)^{1/4}
+$$
+
+where:
+
+* $E$ = emissive power, in W/m²
+* $\epsilon$ = surface emissivity
+* $T$ = absolute temperature, in K
+
+Useful reference values for $\epsilon = 1.0$ are listed below.
+
+| Heat Flux [W/m²] | Temperature [°C] | Temperature [K] |
+| :--- | :--- | :--- |
+| 42,000 | 655 | 928 |
+| 84,000 | 831 | 1,104 |
+| 168,000 | 1,039 | 1,312 |
 
 Use the calculator below to convert between heat flux and temperature.
 

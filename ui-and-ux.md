@@ -1,86 +1,79 @@
 # User Interface and Interaction
 
-This document explains how the user interface is organized and how to use it efficiently when building, editing, and reviewing a radiation heat transfer scene.
+This page describes the organisation of the FSE Radiation View interface and outlines an efficient operating sequence for building, editing, and reviewing radiation heat transfer models.
 
 ![Site plan](public/ui-and-ux/ui-overview.png)
 
-The interface is divided into five main areas:
+The interface is arranged around the main 3D viewport and is divided into four primary regions:
 
-* **Top menu bar** for file and application-level commands.
-* **Sidebar** for object properties, scene settings, and computation controls.
-* **Left toolbar** for quickly adding objects to the scene.
-* **Bottom toolbar** for navigation, object interaction modes, and view switching.
+* **Top Menu Bar:** File operations and application-level commands.
+* **Sidebar:** Object properties, scene settings, and solver controls.
+* **Left Toolbar:** Object-creation tools for rapid model setup.
+* **Bottom Toolbar:** View control, transformation modes, and axis options.
 
 ## Top Menu Bar
 
-The top menu bar exposes commands that are not always practical to keep on a toolbar.
+The top menu bar contains commands that apply to the project as a whole rather than to a single selected object.
 
-Typical actions available here include:
+Typical uses include:
 
-* Opening and saving files.
-* Importing and exporting project data.
-* Accessing scene, edit, and application commands.
-* Opening tools and options that are used less frequently than the main viewport controls.
-
-In general, use the top menu bar whenever you need to manage files or access commands that affect the project as a whole rather than a single object.
+* opening, saving, and managing project files
+* importing plans or reference images
+* exporting reports and other project outputs
+* accessing application-level settings and secondary tools
 
 ## Sidebar
 
 ![sidebar](public/ui-and-ux/ui-sidebar.png)
 
-The sidebar is the main panel for inspecting and editing the current selection or scene configuration.
+The sidebar is the principal location for precise numerical input and model review. Depending on the current selection, it is used to:
 
-Depending on what is selected, this area can be used to:
+* enter exact coordinates and dimensions
+* assign thermal and material properties
+* define receiver mesh size and other solver inputs
+* run the calculation and refresh the displayed results
 
-* Review and edit object properties.
-* Adjust geometry and placement values.
-* Configure material or solver-related inputs.
-* Access scene-wide settings and visualization controls.
-
-The sidebar is the best place to make precise changes after creating or selecting an object in the viewport.
+As a general rule, objects are created and positioned visually in the viewport, then refined quantitatively in the sidebar.
 
 ## Left Toolbar
 
 ![left toolbar](public/ui-and-ux/ui-left-toolbar.png)
 
-The left toolbar provides quick access to object creation tools so users can add items directly into the scene without opening menus.
+The left toolbar provides direct access to object-creation tools, including:
 
-Typical uses include adding:
+* **Emitters** and **Receivers**
+* **Blocks**
+* plan-based surface tools: **E<sub>p</sub>** / **R<sub>p</sub>** for flat objects and **E<sub>S</sub>** / **R<sub>S</sub>** for standing objects
 
-* **Receivers**
-* **Emitters**
-* Other supported scene objects such as blocks or plan-based tools, depending on the current workflow
-
-This toolbar is intended for rapid scene setup. When building a model, users will often start here to place the main objects before refining their dimensions and properties in the sidebar.
+These tools are intended for rapid scene construction. A common workflow is to sketch the model using the left toolbar, then complete the detailed parameterisation in the sidebar.
 
 ## Bottom Toolbar
 
 ![bottom toolbar](public/ui-and-ux/ui-bottom-toolbar.png)
 
-The bottom toolbar provides quick access to scene navigation controls and interaction modes for editing objects in the 3D view.
+The bottom toolbar controls how the user interacts with the 3D scene and how objects are transformed.
 
 ### Navigation and Interaction Modes
 
-The toolbar allows users to switch between several working modes:
+The active mode determines what a left-click does in the viewport:
 
-* **Select mode** for general navigation and object selection.
-* **Move mode** to select and move objects.
-* **Stretch mode** to select and stretch objects.
-* **Rotate mode** to select and rotate objects.
+* **Select Mode:** Selects objects without applying transformations.
+* **Move Mode:** Activates the translation gizmo.
+* **Stretch Mode:** Activates the dimension-adjustment gizmo.
+* **Rotate Mode:** Activates the rotation gizmo.
 
-These modes help separate common editing tasks so the user can intentionally choose how they want to interact with the selected object.
+For routine navigation and inspection, **Select Mode** is generally the safest default.
 
-### Local Axis Mode
+### Local and Global Axes
 
-The bottom toolbar also provides a **Local axis** toggle.
+The **Local axis** toggle determines whether transformations are aligned with the object's own axes or with the global coordinate system.
 
-When this option is enabled, move, rotate, and stretch operations are performed relative to the selected object's local axes rather than the global scene axes. This is particularly useful when editing objects that have already been rotated and need to be adjusted in their own orientation.
-
-When the toggle is disabled, transformations are applied relative to the global axes.
+* **Local axis enabled:** Transformations follow the selected object's local orientation. This is particularly useful after an object has been rotated.
+* **Local axis disabled:** Transformations follow the global scene axes.
 
 ### View Selection
 
-The toolbar includes quick access to several standard viewport views:
+The toolbar also provides preset camera views:
 
 * **Perspective**
 * **Front**
@@ -90,18 +83,14 @@ The toolbar includes quick access to several standard viewport views:
 * **Top**
 * **Bottom**
 
-The **Perspective** view is the standard 3D working view.
+Orthographic views are particularly useful when aligning objects to a single plane, checking face orientation, or drawing geometry against an imported plan.
 
-The orthographic views (**Front**, **Back**, **Left**, **Right**, **Top**, and **Bottom**) present the scene in a more 2D manner, which makes alignment, positioning, and editing easier when working on a single plane or axis direction.
+## Recommended Operating Sequence
 
-## Recommended Way to Use the Interface
+For efficient and reliable model setup, the following sequence is recommended:
 
-For efficient editing, a typical workflow is:
-
-1. Use the left toolbar to add emitters, receivers, and other required objects.
-2. Use the bottom toolbar to choose the correct interaction mode and viewport view.
-3. Select objects in the scene and refine their parameters in the sidebar.
-4. Use the top menu bar for file operations and less frequently used commands.
-5. Refer to the lower-left overlays to stay oriented and monitor scene information while editing.
-
-Using the interface in this way helps separate scene creation, scene navigation, precise editing, and project management into clear, predictable steps.
+1. **Import references:** Load plans or images if they are needed for alignment.
+2. **Create geometry:** Add emitters, receivers, and blocks using the left toolbar.
+3. **Position the model:** Use orthographic views and the transformation modes to place the geometry accurately.
+4. **Enter exact values:** Use the sidebar for dimensions, temperatures, emissivities, absorptivities, mesh sizes, and solver settings.
+5. **Run and review:** Start the solver, inspect the heatmap, and export the results when the setup is satisfactory.

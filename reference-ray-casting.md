@@ -1,20 +1,69 @@
-# Ray-Casting Methodology for View Factor Resolution
-This section outlines the numerical approach utilised by the application's solver to determine the geometric view factors ($F_e$ and $F_a$) at each receiver mesh point. The solver employs a Monte Carlo ray-casting algorithm to evaluate the integral of the radiation exchange over the visible hemisphere.
+# Ray-Casting Methodology for View-Factor Resolution
 
-As each ray is projected into the 3D domain, the solver calculates potential geometric intersections with the defined emitter.
+This page describes the numerical procedure used by FSE Radiation View to estimate the direct emitter view factors required by the radiation heat transfer model.
 
-Let $\delta_i$ be a boolean intersection function for the $i$-th ray cast from the receiver point.
-* $\delta_i = 1$ if the ray successfully intersects an emitter surface without prior obstruction.
-* $\delta_i = 0$ if the ray fails to intersect an emitter.
+## Differential View-Factor Basis
 
-The view factor from the receiver mesh point to the emitter geometry ($F_e$) is evaluated as the ratio of successful emitter intersections to the total number of cast rays:
+For a receiver sample point $p$, the view factor to any target surface region $j$ is the fraction of the outward hemispherical radiative distribution subtended by that target. In differential form,
 
-$$F_e = \frac{1}{N} \sum_{i=1}^{N} \delta_i$$
+$$
+F_{p \to j} = \frac{1}{\pi} \int_{\Omega_j} \cos \theta \, d\omega
+$$
 
-## Ambient View Factor ($F_a$)
-Rays that do not intersect any designated emitter geometry are classified as escaping to the ambient environment. The ambient view factor is strictly the complement of the emitter view factor:
+where:
 
-$$F_a = 1 - F_e$$
+* $\Omega_j$ = solid angle occupied by target $j$ as seen from $p$
+* $\theta$ = angle between the receiver surface normal and the sampled direction
+* $d\omega$ = differential solid angle
 
-## Algorithmic Accuracy and Mesh Resolution
-The accuracy of the view factor calculation—and consequently the net heat flux—is highly dependent on the ray count ($N$). Higher values of $N$ reduce statistical variance, allowing the computed view factor to approach the exact analytical geometric view factor, at the cost of increased computation time.
+This is the standard diffuse view-factor relation for a differential receiving area.
+
+## Monte Carlo Estimator
+
+The application evaluates the integral numerically using Monte Carlo ray tracing. For the view factor to be expressed directly as a hit fraction, the sampled ray directions must follow a cosine-weighted distribution over the outward hemisphere. The formulation below assumes that weighting.
+
+Let $I_j(\omega_i)$ be an indicator function for the $i$-th sampled direction:
+
+* $I_j(\omega_i) = 1$ if the first valid intersection is target $j$
+* $I_j(\omega_i) = 0$ otherwise
+
+With $N$ sampled rays, the view factor to target $j$ is estimated as
+
+$$
+F_{p \to j} \approx \frac{1}{N} \sum_{i=1}^{N} I_j(\omega_i)
+$$
+
+For thermal calculations in this tool, target $j$ is one of the active emitters. Summing over all emitters gives the total direct emitter view factor seen by the receiver sample point.
+
+## Geometric Classification of Rays
+
+Each sampled ray is classified by its first relevant intersection:
+
+* **Emitter hit:** The ray contributes to the corresponding emitter view factor.
+* **Block hit:** The ray is prevented from reaching emitters beyond that obstruction.
+* **Receiver hit:** The ray is also prevented from reaching emitters beyond that obstruction.
+* **No geometry hit:** The ray does not intersect an active emitter within the explicit model geometry.
+
+The ray-tracing stage is used only to estimate **direct emitter irradiation**. Ambient radiation is not inferred from rays that miss emitters, and no ambient view factor is solved.
+
+Instead, if ambient temperature is provided, the solver applies a separate uniform radiative background term everywhere on the receiver. That ambient term is therefore independent of blocking, orientation, and sky view.
+
+## Statistical Accuracy
+
+For a hit-or-miss Monte Carlo estimator, the view-factor estimate for a given target behaves as a Bernoulli sample mean. The standard deviation therefore scales as
+
+$$
+\operatorname{Std}\!\left(F_{p \to j}\right) \approx \sqrt{\frac{F_{p \to j}\left(1 - F_{p \to j}\right)}{N}}
+$$
+
+and, in practical terms, the uncertainty decreases approximately in proportion to $1/\sqrt{N}$.
+
+Increasing the ray count reduces statistical variance but increases computation time. The effect is most noticeable when:
+
+* the mesh is fine and local gradients are being resolved
+* the view factor is small and few sampled rays reach the emitter
+* peak values are being extracted from a noisy field
+
+## Mesh Resolution and Computational Cost
+
+Reducing receiver mesh size increases the number of reported values across the receiver. That improves spatial resolution, but it also makes local stochastic variation more visible. In practice, finer meshes often require higher ray counts if a similarly smooth field is needed for interpretation or reporting.
