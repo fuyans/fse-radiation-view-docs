@@ -89,11 +89,10 @@ Substituting the direct-emitter and ambient terms gives
 $$
 q''_{\text{net}}(p) =
 \alpha_r \left(
-\sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4
-+
+\sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4 +
 \sigma T_a^4
-\right)
-- \epsilon_r \sigma T_r^4
+\right) - 
+\epsilon_r \sigma T_r^4
 $$
 
 when ambient temperature is supplied.
@@ -104,8 +103,8 @@ $$
 q''_{\text{net}}(p) =
 \alpha_r \left(
 \sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4
-\right)
-- \epsilon_r \sigma T_r^4
+\right) - 
+\epsilon_r \sigma T_r^4
 $$
 
 For a single emitter, this becomes
@@ -113,14 +112,20 @@ For a single emitter, this becomes
 $$
 q''_{\text{net}} =
 \alpha_r \left(
-F_{p \to e}\, \epsilon_e\, \sigma T_e^4
-+
+F_{p \to e}\, \epsilon_e\, \sigma T_e^4 +
 \sigma T_a^4
-\right)
-- \epsilon_r \sigma T_r^4
+\right) - 
+\epsilon_r \sigma T_r^4
 $$
 
 when ambient temperature is present.
+
+If the receiver is treated as black, such that $\alpha_r = \epsilon_r = 1$, and the ambient and receiver temperatures are equal, such that $T_a = T_r$, the equation reduces to
+
+$$
+q''_{\text{net}}(p) =
+\sum_{j=1}^{M} F_{p \to e_j}\, \epsilon_{e_j}\, \sigma T_{e_j}^4
+$$
 
 ## Practical Interpretation
 
@@ -155,12 +160,6 @@ Where a surface is defined by emitted heat flux rather than temperature, the Ste
 
 $$
 E = \epsilon \sigma T^4
-$$
-
-The inverse conversion is
-
-$$
-T = \left(\frac{E}{\epsilon \sigma}\right)^{1/4}
 $$
 
 where:
